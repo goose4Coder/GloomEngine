@@ -1,11 +1,10 @@
-
+#include <fstream>
 #include "Engine.h"
-
-using namespace GloomEngine;
 
 
 void GloomEngine::Init(){
-  currentScene.AppendChild(new Graphics::CircleDrawer(DISPLAY_WIDTH/2,DISPLAY_HEIGHT/2));
+  OnGameStart(*this);
+	
 }
 
 int GloomEngine::RunGame(){
@@ -14,9 +13,9 @@ int GloomEngine::RunGame(){
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER *timer = NULL;
-    bool redraw = true;
+    // bool redraw = true;
 
-    display = al_create_display(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+    display = al_create_display(this->DISPLAY_WIDTH, this->DISPLAY_HEIGHT);
    if(!display) {
       std::cout<<stderr<< "failed to create display!\n";
       al_destroy_timer(timer);
@@ -52,7 +51,12 @@ int GloomEngine::RunGame(){
 
     al_flip_display();
 
-    GloomEngine::Init();
+    this->Init();
+    if (this->scenes.size()>0){
+      
+      currentScene=scenes[0];
+      std::cout<<"Not null:"<< currentScene.GetName()<<std::endl;
+    }
     currentScene.StartRecursive();
 
     al_start_timer(timer);
@@ -66,14 +70,27 @@ int GloomEngine::RunGame(){
      if(ev.type == ALLEGRO_EVENT_TIMER) {
       currentScene.UpdateRecursive();
      }else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-        break;
+        this->ChangeScene(-1);
       }
-
+      if (this->sceneToChange>-2){
+        auto toSave = currentScene.SaveRecursive();
+        std::fstream sceneSave(currentScene.GetName()+"Scene.bin",std::fstream::out|std::fstream::binary);
+        sceneSave.write(&toSave[0],toSave.size()*sizeof(char));
+        sceneSave.close();
+        if (this->sceneToChange==-1){
+          this->notExitGame=false;
+        }else{
+          currentScene=this->scenes[sceneToChange];
+          sceneToChange=-2;
+        }
+        
+       }
      if (al_is_event_queue_empty(event_queue)){
       al_clear_to_color(al_map_rgb(0, 0, 0));
-      currentScene.DrawRecursive();
+      currentScene.Draw(0,this->DISPLAY_WIDTH,this->DISPLAY_HEIGHT);
       al_flip_display();
      }
+     
     }
 
     

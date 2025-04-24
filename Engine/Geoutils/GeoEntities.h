@@ -2,59 +2,40 @@
 #define GEO_ENTITIES_H
 
 namespace Geoutils{
-    class Coordinates{
-        public:
-        Coordinates() {};
-        Coordinates(float x,float y);
-        Coordinates operator+(const Coordinates& adder);
-        Coordinates operator-(const Coordinates& substractor);
-        Coordinates operator*(const float& multiplier);
 
-        float x=0;
-        float y=0;
-    };
-    class IPointOperatable{
-        public:
-            virtual Coordinates GetCoordinates() const =0 ;
-            virtual ~IPointOperatable(){};
-    };
-
-    class Vector : public IPointOperatable {
+    class Vector {
     public:
-        Vector(float x, float y);
-        Vector(Coordinates coordinates);
+        Vector(){};
+        Vector(bool exists){this->isNull=!exists;}
+        Vector(float x, float y){
+            this->x=x;
+            this->y=y;
+        };
         Vector operator*(const float& multiplier);
+        Vector operator+(const Vector& adder);
+        Vector operator-(const Vector& substractor);
         Vector GetPerpendicular() const;
         float GetNorm() const;
-        Coordinates GetCoordinates() const override;
         Vector Rotate(float angle) const;
-    protected:
-        Coordinates value;
-    };
-
-    class Point: public IPointOperatable{
-        public:
-        Point(float x, float y);
-        Point(Coordinates coordinates);
-        Point(){this->isNull=true;}
-        Coordinates GetCoordinates() const override;
-        Point Translate(Vector v);
-        Point Rotate(Point center,float angle);
+        Vector Rotate(Vector center,float angle);
         inline bool Exists() {
             return !this->isNull;
         }
-        protected:
+        float x=0;
+        float y=0;
+    protected:
+        
         bool isNull=false;
-        Coordinates coordinates;
     };
 
-# define NULL_POINT Point()
-
+# define NULL_POINT Vector(false)
+# define Point Vector
    
 
     class Line {
     public:
-        Line(Point a, Vector v);
+        Line();
+        Line(Point a, Vector v, float multiplier);
         Line(Point a, Point b);
         Point GetIntersection(Line l, float lowerBound, float upperBound, float secondLowerBound, float secondUpperBound);
         Point GetIntersection(Line l);
@@ -66,8 +47,6 @@ namespace Geoutils{
         Vector v = Vector(0, 0);
         Point origin = Point(0, 0);
     };
-
-    Vector DirectVector(const IPointOperatable& from, const IPointOperatable& to);
 
 }
 #endif
