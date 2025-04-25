@@ -4,42 +4,48 @@
 namespace BaseNodes{
     #define STEP_DISTANCE 1
 
-    void Node::UpdateRecursive(){
-        this->Update();
-        for (int i=0;i<this->children.size();i++){
-            this->children[i]->UpdateRecursive();
+    void Scene::AppendEntity(std::shared_ptr<Entity>& entity) {
+        this->entities.push_back(std::shared_ptr<Entity>(entity));
+    }
+
+    const void Scene::Draw(float screenX, float screenY){\
+        
+        this->activeCamera.DrawObjects(this->currentLevel,this->entities,screenX,screenY);
+        this->currentLevel = this->level;
+    }
+
+    void Scene::Start() {
+        for (size_t i = 0; i < this->entities.size(); i++)
+        {
+            this->entities[i]->Start();
+        }
+        this->currentLevel = this->level;
+    }
+
+    void Scene::Update() {
+        for (size_t i = 0; i < this->entities.size(); i++)
+        {
+            auto pos = this->entities[i]->GetPosition();
+            this->currentLevel[pos.x][pos.y] = -i - 1;
+        }
+        for (size_t i = 0; i < this->entities.size(); i++)
+        {
+            this->entities[i]->Update();
         }
     }
 
-    const void Node::DrawRecursive(float size , float screenX) {
-        this->Draw(size, screenX);
-        for (int i=0;i<this->children.size();i++){
-            this->children[i]->DrawRecursive(size,this->children[i]->GetPosition().x);
-        }
-    }
-
-
-    void Node::StartRecursive(){
-        this->Start();
-        for (int i=0;i<this->children.size();i++){
-            this->children[i]->StartRecursive();
-        }
-    }
-
-    std::vector<char> Node::SaveRecursive(){
-        auto toReturn=this->Save();
-        for (int i=0;i<this->children.size();i++){
-            auto child=this->children[i]->SaveRecursive();
-            toReturn.insert(toReturn.end(),child.begin(),child.end());
+    std::vector<char> Scene::Save() {
+        auto toReturn = std::vector<char>();
+        auto saving = std::vector<char>();
+        for (size_t i = 0; i < this->entities.size(); i++)
+        {
+            saving = this->entities[i]->Save();
+            toReturn.insert(toReturn.end(), saving.begin(), saving.end());
         }
         return toReturn;
-    }
 
-    void Node::AppendChild(std::shared_ptr<Node> &child){
-        this->children.push_back(std::shared_ptr<Node>(child));
     }
-
-    void Camera::DrawObjects(const std::vector<std::shared_ptr<BaseNodes::Node>>& drawables, float screenX, float screenY){
+    /*void Camera::DrawObjects(const std::vector<std::shared_ptr<BaseNodes::Node>>& drawables, float screenX, float screenY){
         for (size_t i = 0; i < drawables.size(); i++)
         {
             
@@ -55,6 +61,6 @@ namespace BaseNodes{
 
     const void Scene::Draw(float distance, float screenX, float screenY){
         this->activeCamera.DrawObjects(this->children, screenX, screenY);
-    }
+    }*/
 
 }

@@ -2,21 +2,27 @@
 #define NODE_H
 
 #include <vector>
+#include <array>
 #include <memory>
 #include <string>
 #include <math.h>
 #include "../Geoutils/GeoEntities.h"
 
 
+
+
 namespace BaseNodes{
-    class Node{
+#define Grid std::array<std::array<int,1000>,1000>
+
+    class Entity{
         public:
-        Node(){ this->children=std::vector<std::shared_ptr<Node>>(); }
-        void UpdateRecursive();
-        const void DrawRecursive(float size, float screenX);
-        void StartRecursive();
-        std::vector<char> SaveRecursive();
-        void AppendChild(std::shared_ptr<Node> &child);
+        Entity(float x, float y) { this->coordinates = Geoutils::Vector(x, y); };
+        Entity(){  }
+        virtual void Update() {};
+        const virtual void Draw(float size, float screenX) {};
+        virtual void Start();
+        virtual std::vector<char> Save() {};
+        
         inline const std::string GetName(){ return this->name;}
         virtual void Update(){};
         const virtual void Draw(float size, float screenX){};
@@ -31,49 +37,48 @@ namespace BaseNodes{
         virtual std::vector<char> Save(){ return std::vector<char>(0);}
         protected:
         std::string name="BaseNode";
-        std::vector<std::shared_ptr<Node>> children;
         Geoutils::Point coordinates=Geoutils::Vector(0,0);
     };
 
-    class SceneObject: public Node{
-        public:
-        SceneObject(float x, float y){ this -> coordinates = Geoutils::Vector(x,y);};
-        SceneObject(){ };
-        protected:
-        std::string name="SceneObject";
-        
-    };
 
-    class Camera: public BaseNodes::SceneObject{
+    class Camera: public BaseNodes::Entity{
         public:
-        Camera(float x, float y, float distance, float angle, float screenWidth): BaseNodes::SceneObject(x,y){ 
+        Camera(float x, float y, float distance, float angle, float screenWidth): BaseNodes::Entity(x,y){
             this->renderDistance=distance;
             this->angle=angle;
             this->focalDistance = screenWidth/2/tan(angle);
         };
-        Camera() : BaseNodes::SceneObject(0,0) {
+        Camera() : BaseNodes::Entity(0,0) {
 
         };
-        void DrawObjects(const std::vector<std::shared_ptr<BaseNodes::Node>> &drawables, float screenX, float screenY);
+        void DrawObjects(const Grid &level,const std::vector<std::shared_ptr<BaseNodes::Entity>> &drawables, float screenX, float screenY);
         protected:
         std::string name="Camera";
-        float angle;
+        float angle = 0;
         float renderDistance;
         float focalDistance;
     };
 
-    class Scene: public Node{
+    class Scene{
         public:
-        Scene(){};
+        Scene(){ };
         Scene(std::string name){this->name=name;}
-        void Update() override{};
-        const void Draw(float size, float screenX) override {};
-        const void Draw(float size, float screenX, float screenY);
-        void Start() override{};
+        const void Draw(float screenX, float screenY);
+        void Start();
+        void Update();
         void SetCamera(Camera camera) { this->activeCamera = camera; }
-        virtual void Load(char *toLoad){};
+        void AppendEntity(std::shared_ptr<Entity>& entity);
+        void Load(char *toLoad){};
+        std::vector<char> Save();
+        inline std::string GetName() { return this->name; }
         protected:
+        std::string name;
         Camera activeCamera;
+        std::vector<std::shared_ptr<Entity>> entities = std::vector<std::shared_ptr<Entity>>();
+        std::vector<std::shared_ptr<Entity>> environnementSingletones= std::vector<std::shared_ptr<Entity>>();
+        Grid level;
+        Grid currentLevel;
+        std::string name;
     };
 }
 #endif

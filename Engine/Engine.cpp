@@ -57,7 +57,7 @@ int GloomEngine::RunGame(){
       currentScene=scenes[0];
       std::cout<<"Not null:"<< currentScene.GetName()<<std::endl;
     }
-    currentScene.StartRecursive();
+    currentScene.Start();
 
     al_start_timer(timer);
     
@@ -68,12 +68,12 @@ int GloomEngine::RunGame(){
      al_wait_for_event(event_queue, &ev);
      
      if(ev.type == ALLEGRO_EVENT_TIMER) {
-      currentScene.UpdateRecursive();
+      currentScene.Update();
      }else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
         this->ChangeScene(-1);
       }
       if (this->sceneToChange>-2){
-        auto toSave = currentScene.SaveRecursive();
+        auto toSave = currentScene.Save();
         std::fstream sceneSave(currentScene.GetName()+"Scene.bin",std::fstream::out|std::fstream::binary);
         sceneSave.write(&toSave[0],toSave.size()*sizeof(char));
         sceneSave.close();
