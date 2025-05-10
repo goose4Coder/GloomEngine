@@ -8,6 +8,7 @@
 #include "Nodes/Node.h"
 #include "Graphics/Graphics.h"
 
+
 class GloomEngine {
 	public:
 	GloomEngine(int fps, float displayWidth,float displayHeight){
@@ -21,12 +22,10 @@ class GloomEngine {
 		this->sceneToChange=sceneNum;
 	};
 	inline void RegisterScene(BaseNodes::Scene scene){
-		scene.SetCamera(BaseNodes::Camera(0, 0, 1000, 1.2,740));
 		this->scenes.push_back(scene);
 	};
 
 	protected:
-
 	int FPS = 60;
 	float DISPLAY_WIDTH = 740;
 	float DISPLAY_HEIGHT = 480;

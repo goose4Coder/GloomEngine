@@ -1,61 +1,57 @@
 #include "../Engine/Engine.h"
-
 const int FPS = 60;
 const float DISPLAY_WIDTH = 740;
 const float DISPLAY_HEIGHT = 480;
 
-class MovingCircle: public Graphics::CircleDrawer{
-	public:
-	MovingCircle(float x,float y): CircleDrawer(x,y){}
-	void Update() override{
-		if (forward){
-			this->MoveBy(0, -0.5);
-		}else{
-			this->MoveBy(0, 0.5);
-		}
-		
-		if (this->coordinates.y>100){
-			forward=true;
-		}
-		if (this->coordinates.y<5){
-			forward=false;
-		}
-	}
-	protected:
-	bool forward=true;
-};
 
-class MovingRect : public Graphics::RectangleDrawer {
+
+
+
+class Player: public BaseNodes::Entity {
 public:
-	MovingRect(float x, float y) : RectangleDrawer(x, y) {}
-	void Update() override {
-		if (forward) {
-			this->MoveBy(0, -0.5);
+	Player(float x, float y) : BaseNodes::Entity(x, y) {
+		
+	};
+	Player() : BaseNodes::Entity(6,6) {
+
+	};
+protected:
+	void Update(ALLEGRO_KEYBOARD_STATE keyState, std::vector<std::shared_ptr<Entity>> entities, Entity& camera, std::vector<std::shared_ptr<Entity>> env) override{
+		if (al_key_down(&keyState, ALLEGRO_KEY_W)) {
+			this->MoveBy(0.1,0);
+			std::cout << "wwwwwwwwwww" << std::endl;
+		}
+		else if (al_key_down(&keyState, ALLEGRO_KEY_S)) {
+			this->MoveBy(-0.1, 0);
 		}
 		else {
-			this->MoveBy(0, 0.5);
+			std::cout << "no butt" << std::endl;
 		}
-
-		if (this->coordinates.y > 100) {
-			forward = true;
-		}
-		if (this->coordinates.y < 5) {
-			forward = false;
-		}
-	}
-protected:
-	bool forward = true;
+		camera.Move(this->coordinates.x, this->coordinates.y);
+	};
 };
 
 void OnGameStart(GloomEngine &game){
-	auto scene = BaseNodes::Scene("main");
-	/*auto a = std::shared_ptr<BaseNodes::Node>(new MovingCircle(0.1,70));*/
-	auto a = std::shared_ptr<BaseNodes::Node>(new MovingRect(0.1, 55));
-	auto b = std::shared_ptr<BaseNodes::Node>(new MovingRect(20, 70));
-	auto c = std::shared_ptr<BaseNodes::Node>(new MovingRect(-20,70));
-	scene.AppendChild(a);
-	scene.AppendChild(b);
-	scene.AppendChild(c);
+	auto scene = BaseNodes::Scene(std::string("main"),
+	std::array<std::array<int,11>,11>{
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{0,1,0,1,1,1,1,1,1,0,0},
+		std::array<int,11>{0,1,0,0,0,0,0,0,1,0,0},
+		std::array<int,11>{0,1,0,0,0,0,0,0,1,0,0},
+		std::array<int,11>{0,1,0,0,0,0,0,0,1,0,0},
+		std::array<int,11>{0,1,1,1,1,1,1,1,1,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+	}
+	);
+	auto a = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer());
+	auto p = std::shared_ptr<BaseNodes::Entity>(new Player(6, 6));
+	scene.AppendEnv(a);
+	scene.AppendEntity(p);
+	scene.SetCamera(BaseNodes::Camera(0, 0, 7, 1.35, DISPLAY_WIDTH));
 	game.RegisterScene(scene);
 }
 

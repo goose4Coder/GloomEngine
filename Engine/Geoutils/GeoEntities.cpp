@@ -5,15 +5,15 @@
 namespace Geoutils{
 
 
-Vector Geoutils::Vector::operator+(const Vector& adder){
+Vector Geoutils::Vector::operator+(const Vector& adder)const{
     return Vector(this->x+adder.x,this->y+adder.y);
 }
 
-Vector Geoutils::Vector::operator-(const Vector& substractor){
+Vector Geoutils::Vector::operator-(const Vector& substractor)const{
     return Vector(this->x-substractor.x,this->y-substractor.y);
 }
 
-Vector Geoutils::Vector::operator*(const float& multiplier){
+Vector Geoutils::Vector::operator*(const float& multiplier)const{
     return Vector(this->x*multiplier,this->y* multiplier);
 }
 
@@ -79,11 +79,8 @@ Point Line::GetIntersection(Line l, float lowerBound, float upperBound, float se
 }
 
 Vector Vector::Rotate(float angle) const{
-    auto alpha=acos(this->x/this->GetNorm());
-    if (this->y<0){
-        alpha=-alpha;
-    }
-    return Vector(cos(alpha+angle)*this->GetNorm(),sin(alpha+angle)*this->GetNorm());
+    
+    return Vector(this->x*cos(angle)- this->y * sin(angle), this->x * sin(angle)+ this->y * cos(angle));
 }
 
 
