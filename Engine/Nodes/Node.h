@@ -29,13 +29,14 @@ namespace BaseNodes{
             this->coordinates = Geoutils::Point(x,y);
         }
         inline void MoveBy(float x, float y){
-            this->coordinates = Geoutils::Point(this->coordinates.x+x,this->coordinates.y+y);
+            this->coordinates = Geoutils::Point(this->coordinates.x+x,this->coordinates.y+y).Rotate(0);
         }
         inline const Geoutils::Point GetPosition(){return this->coordinates;}
         virtual std::vector<char> Save(){ return std::vector<char>(0);}
         protected:
         std::string name="BaseNode";
         Geoutils::Point coordinates=Geoutils::Vector(0,0);
+        float rotation=0;
     };
 
 
@@ -53,7 +54,6 @@ namespace BaseNodes{
         protected:
         std::string name="Camera";
         float angle = 0;
-        float rotation = 0;
         float renderDistance=0;
         float focalDistance=0;
     };

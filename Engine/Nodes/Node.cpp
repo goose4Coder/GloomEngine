@@ -57,7 +57,7 @@ namespace BaseNodes{
         rays.push_back(Geoutils::Vector(1, 0).Rotate(1.57 - this->angle));
         for (float i = 1.57-this->angle; i < 1.57 + this->angle; i+=0.5)
         {
-            rays.push_back(Geoutils::Vector(1,0).Rotate(i));
+            rays.push_back(Geoutils::Vector(1,0).Rotate(i+this->rotation));
         }
         float deltaX = 0;
         for (size_t i = 0; i < rays.size(); i++)
@@ -78,7 +78,7 @@ namespace BaseNodes{
                 //here error
                 // std::cout << "cast "<<i<<" on "<<x<<std::endl;
                 auto y = rays[i].y/rays[i].x*(x-this->coordinates.x)+this->coordinates.y;
-                if((Geoutils::Vector(x,y)-this->coordinates).GetNorm()<distance&&y<level.size()&&y>=0){
+                if((Geoutils::Vector(x,y)-this->coordinates).GetNorm()<distance&&y<level.size()&&y>=0&&cos(-this->rotation)*(x - this->coordinates.x)<=0){
                     if (level[size_t(x)][size_t(y)]!=0) {
                        /* std::cout << "hit ray " << x << " " << y << " h" << level[size_t(x)][size_t(y)] << std::endl;*/
                     }

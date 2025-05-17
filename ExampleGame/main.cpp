@@ -18,14 +18,11 @@ public:
 protected:
 	void Update(ALLEGRO_KEYBOARD_STATE keyState, std::vector<std::shared_ptr<Entity>> entities, Entity& camera, std::vector<std::shared_ptr<Entity>> env) override{
 		if (al_key_down(&keyState, ALLEGRO_KEY_W)) {
-			this->MoveBy(0.1,0);
-			std::cout << "wwwwwwwwwww" << std::endl;
+			this->MoveBy(-0.1,0);
+			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
 		}
 		else if (al_key_down(&keyState, ALLEGRO_KEY_S)) {
-			this->MoveBy(-0.1, 0);
-		}
-		else {
-			std::cout << "no butt" << std::endl;
+			this->MoveBy(0.1, 0);
 		}
 		camera.Move(this->coordinates.x, this->coordinates.y);
 	};
@@ -37,21 +34,23 @@ void OnGameStart(GloomEngine &game){
 		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
 		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
 		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,1,0,1,1,1,1,1,1,0,0},
-		std::array<int,11>{0,1,0,0,0,0,0,0,1,0,0},
-		std::array<int,11>{0,1,0,0,0,0,0,0,1,0,0},
-		std::array<int,11>{0,1,0,0,0,0,0,0,1,0,0},
-		std::array<int,11>{0,1,1,1,1,1,1,1,1,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{1,0,2,1,2,1,2,1,0,1,1},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
 		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
 		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
 		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
 	}
 	);
 	auto a = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer());
+	auto b = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer(al_map_rgb(255, 0, 0)));
 	auto p = std::shared_ptr<BaseNodes::Entity>(new Player(6, 6));
 	scene.AppendEnv(a);
+	scene.AppendEnv(b);
 	scene.AppendEntity(p);
-	scene.SetCamera(BaseNodes::Camera(0, 0, 7, 1.35, DISPLAY_WIDTH));
+	scene.SetCamera(BaseNodes::Camera(0, 0, 15, 1.35, DISPLAY_WIDTH));
 	game.RegisterScene(scene);
 }
 
