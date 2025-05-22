@@ -21,7 +21,7 @@ namespace BaseNodes{
         Entity(float x, float y) { this->coordinates = Geoutils::Vector(x, y); };
         Entity(){  }
         virtual void Update(ALLEGRO_KEYBOARD_STATE keyState, std::vector<std::shared_ptr<Entity>> entities, Entity &camera, std::vector<std::shared_ptr<Entity>> env) {};
-        const virtual void Draw(const Geoutils::Vector &cameraPosition,const Geoutils::Vector &renderPos, float screenX, float screenY, float focalDistance) {};
+        const virtual void Draw(float x, float screenX, float screenY, float perpDistance,bool shaded) {};
         virtual void Start(){};
         
         inline const std::string GetName(){ return this->name;}
@@ -33,9 +33,11 @@ namespace BaseNodes{
         }
         inline const Geoutils::Point GetPosition(){return this->coordinates;}
         virtual std::vector<char> Save(){ return std::vector<char>(0);}
+
         protected:
         std::string name="BaseNode";
         Geoutils::Point coordinates=Geoutils::Vector(0,0);
+        Geoutils::Vector direction = Geoutils::Vector(1,0);
         float rotation=0;
     };
 
@@ -45,7 +47,8 @@ namespace BaseNodes{
         Camera(float x, float y, float distance, float angle, float screenWidth): BaseNodes::Entity(x,y){
             this->renderDistance=distance;
             this->angle=angle;
-            this->focalDistance = (screenWidth/2)/tan(angle);
+            this->direction = Geoutils::Vector(1,0);
+            this->planeVector = Geoutils::Vector(0, 0.66);
         };
         Camera() : BaseNodes::Entity(0,0) {
 
@@ -55,7 +58,8 @@ namespace BaseNodes{
         std::string name="Camera";
         float angle = 0;
         float renderDistance=0;
-        float focalDistance=0;
+        
+        Geoutils::Vector planeVector = 0;
     };
 
     class Scene{

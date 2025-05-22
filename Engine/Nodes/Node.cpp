@@ -54,55 +54,78 @@ namespace BaseNodes{
     }
     void Camera::DrawObjects(const Grid &level,const std::vector<std::shared_ptr<BaseNodes::Entity>> &entities,const std::vector<std::shared_ptr<BaseNodes::Entity>> &env, float screenX, float screenY){
         std::vector<Geoutils::Vector> rays = std::vector<Geoutils::Vector>();
-        rays.push_back(Geoutils::Vector(1, 0).Rotate(1.57 - this->angle));
-        for (float i = 1.57-this->angle; i < 1.57 + this->angle; i+=0.5)
+        for (float x = 0; x < screenX; x+=1)
         {
-            rays.push_back(Geoutils::Vector(1,0).Rotate(i+this->rotation));
-        }
-        float deltaX = 0;
-        for (size_t i = 0; i < rays.size(); i++)
-        {
-            size_t toDraw = 0;
-            float distance = 0;
-
-            float toDrawX = 0;
-            float toDrawY = 0;
-            deltaX=0;
-            for (size_t x = 0; x < level.size(); x++)
-            {
-                int toDraw = 0;
-                distance = 10000;
-                
-                toDrawX = 0;
-                toDrawY = 0;
-                //here error
-                // std::cout << "cast "<<i<<" on "<<x<<std::endl;
-                auto y = rays[i].y/rays[i].x*(x-this->coordinates.x)+this->coordinates.y;
-                if((Geoutils::Vector(x,y)-this->coordinates).GetNorm()<distance&&y<level.size()&&y>=0&&cos(-this->rotation)*(x - this->coordinates.x)<=0){
-                    if (level[size_t(x)][size_t(y)]!=0) {
-                       /* std::cout << "hit ray " << x << " " << y << " h" << level[size_t(x)][size_t(y)] << std::endl;*/
-                    }
-                    else {
-                       /* std::cout << "non hit ray " << x << " " << y << " h" << level[size_t(x)][size_t(y)] << std::endl;*/
-                    }
-                    distance = (Geoutils::Vector(x,y)-this->coordinates).GetNorm();
-                    deltaX= x-this->coordinates.x;
-                    toDraw = level[size_t(x)][size_t(y)];
-                    toDrawX = x;
-                    toDrawY = y;
-                    
-                }
-                if (toDraw > 0) {
-                    env[-1 + level[size_t(toDrawX)][size_t(toDrawY)]]->Draw(this->coordinates, Geoutils::Vector(toDrawX, toDrawY), screenX, screenY, this->focalDistance);
-                }
-                else if (toDraw < 0) {
-                    entities[-1 - level[size_t(toDrawX)][size_t(toDrawY)]]->Draw(this->coordinates, Geoutils::Vector(toDrawX, toDrawY), screenX, screenY, this->focalDistance);
-                }
-                /*level[size_t(toDrawX)][size_t(toDrawY)] = 0;*/
-
-            }
             
+            float cameraX = 2 * x / screenX - 1; //x-coordinate in camera space
+            float rayDirX = this->direction.x + this->planeVector.x * cameraX;
+            float rayDirY = this->direction.y + this->planeVector.y * cameraX;
+            auto ray = Geoutils::Vector(rayDirX,rayDirY);
+            /*rays.push_back(Geoutils::Vector((x/screenX)*2-1,focalDistance));*/
+            float deltaDistX = (ray.x == 0) ? 1e30 : std::abs(1 / ray.x);
+            float deltaDistY = (ray.y == 0) ? 1e30 : std::abs(1 / ray.y);
+            int stepX;
+            int stepY;
+            float sideDistX;
+            float sideDistY;
+
+            bool hit = 0; //was there a wall hit?
+            int side;
+            float mapX = floor(this->coordinates.x);
+            float mapY = floor(this->coordinates.y);
+            if (ray.x < 0)
+            {
+                stepX = -1;
+                sideDistX = (this->coordinates.x - mapX) * deltaDistX;
+            }
+            else
+            {
+                stepX = 1;
+
+                sideDistX = (mapX + 1.0 - this->coordinates.x) * deltaDistX;
+            }
+            if (ray.y < 0)
+            {
+                stepY = -1;
+                sideDistY = (this->coordinates.y - mapY) * deltaDistY;
+            }
+            else
+            {
+                stepY = 1;
+                sideDistY = (mapY + 1.0 - this->coordinates.x) * deltaDistY;
+            }
+            while (hit == 0)
+            {
+                //jump to next map square, either in x-direction, or in y-direction
+                if (sideDistX < sideDistY)
+                {
+                    sideDistX += deltaDistX;
+                    mapX += stepX;
+                    side = 0;
+                }
+                else
+                {
+                    sideDistY += deltaDistY;
+                    mapY += stepY;
+                    side = 1;
+                }
+
+                //Check if ray has hit a wall
+                if (mapX >= level.size() || mapY >= level.size() || mapX < 0 || mapY < 0) {
+                    break;
+                }
+                if (level[size_t(mapX)][size_t(mapY)] != 0) hit = 1;
+            }
+            if (hit) {
+                float perpWallDist = 1;
+                if (side == 0) perpWallDist = (sideDistX - deltaDistX);
+                else          perpWallDist = (sideDistY - deltaDistY);
+                if (level[size_t(mapX)][size_t(mapY)] > 0) {
+                    env[level[size_t(mapX)][size_t(mapY)]-1]->Draw(x, screenX, screenY, perpWallDist,bool(side));
+                }
+            }
         }
+        
         
         
         

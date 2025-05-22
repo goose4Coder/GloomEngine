@@ -18,11 +18,21 @@ public:
 protected:
 	void Update(ALLEGRO_KEYBOARD_STATE keyState, std::vector<std::shared_ptr<Entity>> entities, Entity& camera, std::vector<std::shared_ptr<Entity>> env) override{
 		if (al_key_down(&keyState, ALLEGRO_KEY_W)) {
-			this->MoveBy(-0.1,0);
+			this->MoveBy(0.1,0);
+			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
+			
+		}
+		if (al_key_down(&keyState, ALLEGRO_KEY_S)) {
+			this->MoveBy(-0.1, 0);
 			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
 		}
-		else if (al_key_down(&keyState, ALLEGRO_KEY_S)) {
-			this->MoveBy(0.1, 0);
+		if (al_key_down(&keyState, ALLEGRO_KEY_A)) {
+			this->MoveBy(0, -0.1);
+			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
+		}
+		if (al_key_down(&keyState, ALLEGRO_KEY_D)) {
+			this->MoveBy(0, 0.1);
+			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
 		}
 		camera.Move(this->coordinates.x, this->coordinates.y);
 	};
@@ -31,17 +41,17 @@ protected:
 void OnGameStart(GloomEngine &game){
 	auto scene = BaseNodes::Scene(std::string("main"),
 	std::array<std::array<int,11>,11>{
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{1,0,2,1,2,1,2,1,0,1,1},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
-		std::array<int,11>{0,0,0,0,0,0,0,0,0,0,0},
+		std::array<int,11>{2,2,2,2,2,2,2,2,2,2,2},
+		std::array<int,11>{2,0,0,0,0,0,0,0,0,0,2},
+		std::array<int,11>{2,0,0,0,1,0,1,0,0,0,2},
+		std::array<int,11>{2,0,0,0,0,0,0,0,0,0,2},
+		std::array<int,11>{2,0,1,0,0,0,0,0,1,0,2},
+		std::array<int,11>{2,0,0,0,0,0,0,0,0,0,2},
+		std::array<int,11>{2,0,1,0,0,0,0,0,1,0,2},
+		std::array<int,11>{2,0,0,0,0,0,0,0,0,0,2},
+		std::array<int,11>{2,0,0,1,0,1,0,1,0,0,2},
+		std::array<int,11>{2,0,0,0,0,0,0,0,0,0,2},
+		std::array<int,11>{2,2,2,2,2,2,2,2,2,2,2},
 	}
 	);
 	auto a = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer());
@@ -50,7 +60,7 @@ void OnGameStart(GloomEngine &game){
 	scene.AppendEnv(a);
 	scene.AppendEnv(b);
 	scene.AppendEntity(p);
-	scene.SetCamera(BaseNodes::Camera(0, 0, 15, 1.35, DISPLAY_WIDTH));
+	scene.SetCamera(BaseNodes::Camera(0, 0, 30, 1.35, DISPLAY_WIDTH));
 	game.RegisterScene(scene);
 }
 

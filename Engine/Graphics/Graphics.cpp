@@ -4,11 +4,16 @@
 
 namespace Graphics{
 
-const void BaseWallDrawer::Draw(const Geoutils::Vector &cameraPosition,const Geoutils::Vector &renderPos, float screenX, float screenY, float focalDistance){
-    auto delta=cameraPosition-renderPos;
-    auto offsetX = screenX/2+(delta.x * focalDistance / delta.GetNorm());
+const void BaseWallDrawer::Draw(float x, float screenX, float screenY, float perpDistance, bool shaded){
+    float lineHeight = (screenY /2 /perpDistance)*this->height;
     /*std::cout << cameraPosition.x<< " " << renderPos.x << " " << renderPos.y << std::endl;*/
-    al_draw_filled_rectangle(offsetX,screenY/2*(delta.y+1)/delta.y*this->height, offsetX+this->width, screenY / 2 * (delta.y -1) / delta.y * this->height, this->color);
+    auto colorN = this->color;
+    if (shaded) {
+        colorN.r /= 2;
+        colorN.g /= 2;
+        colorN.b /= 2;
+    }
+    al_draw_line(x, screenY / 2 + lineHeight, x, screenY / 2 - lineHeight, this->color, 1);
 }
 
 
