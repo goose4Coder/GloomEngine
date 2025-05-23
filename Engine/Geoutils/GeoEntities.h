@@ -18,6 +18,7 @@ namespace Geoutils{
         float GetNorm() const;
         Vector Rotate(float angle) const;
         Vector Rotate(Vector center,float angle);
+        float GetRotation();
         inline bool Exists() {
             return !this->isNull;
         }

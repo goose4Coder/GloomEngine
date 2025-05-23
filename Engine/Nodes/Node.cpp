@@ -53,7 +53,6 @@ namespace BaseNodes{
 
     }
     void Camera::DrawObjects(const Grid &level,const std::vector<std::shared_ptr<BaseNodes::Entity>> &entities,const std::vector<std::shared_ptr<BaseNodes::Entity>> &env, float screenX, float screenY){
-        std::vector<Geoutils::Vector> rays = std::vector<Geoutils::Vector>();
         for (float x = 0; x < screenX; x+=1)
         {
             
@@ -64,8 +63,8 @@ namespace BaseNodes{
             /*rays.push_back(Geoutils::Vector((x/screenX)*2-1,focalDistance));*/
             float deltaDistX = (ray.x == 0) ? 1e30 : std::abs(1 / ray.x);
             float deltaDistY = (ray.y == 0) ? 1e30 : std::abs(1 / ray.y);
-            int stepX;
-            int stepY;
+            float stepX;
+            float stepY;
             float sideDistX;
             float sideDistY;
 
@@ -92,7 +91,7 @@ namespace BaseNodes{
             else
             {
                 stepY = 1;
-                sideDistY = (mapY + 1.0 - this->coordinates.x) * deltaDistY;
+                sideDistY = (mapY + 1.0 - this->coordinates.y) * deltaDistY;
             }
             while (hit == 0)
             {

@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <math.h>
+#include <iostream>
 #include <allegro5/allegro.h>
 #include "../Geoutils/GeoEntities.h"
 
@@ -29,16 +30,21 @@ namespace BaseNodes{
             this->coordinates = Geoutils::Point(x,y);
         }
         inline void MoveBy(float x, float y){
-            this->coordinates = Geoutils::Point(this->coordinates.x+x,this->coordinates.y+y).Rotate(0);
+            auto rot = this->direction.GetRotation();
+            std::cout << "rotation: " << rot << std::endl;
+            this->coordinates = this->coordinates+Geoutils::Vector(x,y).Rotate(rot);
+        }
+        virtual void Rotate(float a) {
+            this->direction = this->direction.Rotate(a);
         }
         inline const Geoutils::Point GetPosition(){return this->coordinates;}
         virtual std::vector<char> Save(){ return std::vector<char>(0);}
 
         protected:
         std::string name="BaseNode";
+        float rotation = 0;
         Geoutils::Point coordinates=Geoutils::Vector(0,0);
         Geoutils::Vector direction = Geoutils::Vector(1,0);
-        float rotation=0;
     };
 
 
@@ -51,8 +57,13 @@ namespace BaseNodes{
             this->planeVector = Geoutils::Vector(0, 0.66);
         };
         Camera() : BaseNodes::Entity(0,0) {
-
+            
         };
+        void Rotate(float a)override {
+            this->direction = this->direction.Rotate(a);
+            this->planeVector = this->planeVector.Rotate(a);
+            
+        }
         void DrawObjects(const Grid &level,const std::vector<std::shared_ptr<BaseNodes::Entity>> &entities,const std::vector<std::shared_ptr<BaseNodes::Entity>> &env, float screenX, float screenY);
         protected:
         std::string name="Camera";

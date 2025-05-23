@@ -12,7 +12,7 @@ namespace Graphics{
         public:
         BaseWallDrawer(): Entity(0,0){};
         BaseWallDrawer(float x,float y): Entity(x,y){};
-        BaseWallDrawer(ALLEGRO_COLOR colorToSet) : Entity(0, 0) { this->color = colorToSet; }
+        BaseWallDrawer(ALLEGRO_COLOR colorToSet, float height) : Entity(0, 0) { this->color = colorToSet; this->height = height; }
         const void Draw(float x, float screenX, float screenY, float perpDistance,bool shaded) override;
         protected:
         std::string name="wall";

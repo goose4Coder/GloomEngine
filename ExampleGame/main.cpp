@@ -16,23 +16,34 @@ public:
 
 	};
 protected:
-	void Update(ALLEGRO_KEYBOARD_STATE keyState, std::vector<std::shared_ptr<Entity>> entities, Entity& camera, std::vector<std::shared_ptr<Entity>> env) override{
+	void Update(ALLEGRO_KEYBOARD_STATE keyState, std::vector<std::shared_ptr<Entity>> entities, BaseNodes::Entity &camera, std::vector<std::shared_ptr<Entity>> env) override{
 		if (al_key_down(&keyState, ALLEGRO_KEY_W)) {
 			this->MoveBy(0.1,0);
-			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
+			/*std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;*/
 			
 		}
 		if (al_key_down(&keyState, ALLEGRO_KEY_S)) {
 			this->MoveBy(-0.1, 0);
-			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
+			
 		}
 		if (al_key_down(&keyState, ALLEGRO_KEY_A)) {
 			this->MoveBy(0, -0.1);
-			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
+			
 		}
 		if (al_key_down(&keyState, ALLEGRO_KEY_D)) {
 			this->MoveBy(0, 0.1);
-			std::cout << "Moved: " << this->coordinates.x << " " << this->coordinates.y << std::endl;
+			
+		}
+
+		if (al_key_down(&keyState, ALLEGRO_KEY_Z)) {
+			this->Rotate(-0.1);
+			camera.Rotate(-0.01);
+			
+		}
+		if (al_key_down(&keyState, ALLEGRO_KEY_C)) {
+			this->Rotate(0.1);
+			camera.Rotate(0.01);
+			
 		}
 		camera.Move(this->coordinates.x, this->coordinates.y);
 	};
@@ -54,8 +65,8 @@ void OnGameStart(GloomEngine &game){
 		std::array<int,11>{2,2,2,2,2,2,2,2,2,2,2},
 	}
 	);
-	auto a = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer());
-	auto b = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer(al_map_rgb(255, 0, 0)));
+	auto a = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer(al_map_rgb(0, 255, 0), 2));
+	auto b = std::shared_ptr<BaseNodes::Entity>(new Graphics::BaseWallDrawer(al_map_rgb(255, 0, 0),1));
 	auto p = std::shared_ptr<BaseNodes::Entity>(new Player(6, 6));
 	scene.AppendEnv(a);
 	scene.AppendEnv(b);
