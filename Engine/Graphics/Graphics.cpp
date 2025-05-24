@@ -4,15 +4,18 @@
 
 namespace Graphics{
 
-const void CircleDrawer::Draw(float size, float screenX){
-    auto where=this->coordinates;
-    al_draw_filled_circle(370+screenX,240, size, al_map_rgb( 0, 255, 0 ) );
+const void BaseWallDrawer::Draw(float x, float screenX, float screenY, float perpDistance, bool shaded){
+    float lineHeight = (screenY /2 /perpDistance)*this->height;
+    /*std::cout << cameraPosition.x<< " " << renderPos.x << " " << renderPos.y << std::endl;*/
+    auto colorN = this->color;
+    if (shaded) {
+        colorN.r /= 2;
+        colorN.g /= 2;
+        colorN.b /= 2;
+    }
+    al_draw_line(x, screenY / 2 + lineHeight, x, screenY / 2 - lineHeight, this->color, 1);
 }
 
-const void RectangleDrawer::Draw(float size, float screenX) {
-    auto where = this->coordinates;
-    al_draw_filled_rectangle(370 + screenX + this->width/2*size, 240 + this->height / 2 * size, 370 + screenX - this->width / 2 * size, 240 - this->height / 2 * size, al_map_rgb(0, 255, 0));
-    /*al_draw_filled_rectangle(370 + screenX + this->width / 2 * size, 250, screenX, 240, al_map_rgb(0, 255, 0));*/
-}
+
 
 }

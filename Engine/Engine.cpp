@@ -16,10 +16,16 @@ int GloomEngine::RunGame(){
     // bool redraw = true;
 
     display = al_create_display(this->DISPLAY_WIDTH, this->DISPLAY_HEIGHT);
+
    if(!display) {
       std::cout<<stderr<< "failed to create display!\n";
       al_destroy_timer(timer);
       return -1;
+   }
+   if (!al_install_keyboard())
+   {
+       std::cout << "failed to init keyboard!" << std::endl;
+       return false;
    }
 
     event_queue = al_create_event_queue();
@@ -36,7 +42,8 @@ int GloomEngine::RunGame(){
      std::cout<<"Err event qeue"<<std::endl;
      return -1;
     }
-
+    
+    
     if ( !al_init_primitives_addon() )
     {
         std::cout << "failed to init addons!" << std::endl;
@@ -57,7 +64,7 @@ int GloomEngine::RunGame(){
       currentScene=scenes[0];
       std::cout<<"Not null:"<< currentScene.GetName()<<std::endl;
     }
-    currentScene.StartRecursive();
+    currentScene.Start();
 
     al_start_timer(timer);
     
@@ -68,12 +75,12 @@ int GloomEngine::RunGame(){
      al_wait_for_event(event_queue, &ev);
      
      if(ev.type == ALLEGRO_EVENT_TIMER) {
-      currentScene.UpdateRecursive();
+      currentScene.Update();
      }else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
         this->ChangeScene(-1);
       }
       if (this->sceneToChange>-2){
-        auto toSave = currentScene.SaveRecursive();
+        auto toSave = currentScene.Save();
         std::fstream sceneSave(currentScene.GetName()+"Scene.bin",std::fstream::out|std::fstream::binary);
         sceneSave.write(&toSave[0],toSave.size()*sizeof(char));
         sceneSave.close();
@@ -87,7 +94,7 @@ int GloomEngine::RunGame(){
        }
      if (al_is_event_queue_empty(event_queue)){
       al_clear_to_color(al_map_rgb(0, 0, 0));
-      currentScene.Draw(0,this->DISPLAY_WIDTH,this->DISPLAY_HEIGHT);
+      currentScene.Draw(this->DISPLAY_WIDTH,this->DISPLAY_HEIGHT);
       al_flip_display();
      }
      

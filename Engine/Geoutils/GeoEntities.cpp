@@ -1,19 +1,19 @@
-#include "GeoEntities.h"
+﻿#include "GeoEntities.h"
 #include <math.h>
 #include <iostream>
 
 namespace Geoutils{
+#define PI 3.1415
 
-
-Vector Geoutils::Vector::operator+(const Vector& adder){
+Vector Geoutils::Vector::operator+(const Vector& adder)const{
     return Vector(this->x+adder.x,this->y+adder.y);
 }
 
-Vector Geoutils::Vector::operator-(const Vector& substractor){
+Vector Geoutils::Vector::operator-(const Vector& substractor)const{
     return Vector(this->x-substractor.x,this->y-substractor.y);
 }
 
-Vector Geoutils::Vector::operator*(const float& multiplier){
+Vector Geoutils::Vector::operator*(const float& multiplier)const{
     return Vector(this->x*multiplier,this->y* multiplier);
 }
 
@@ -79,13 +79,26 @@ Point Line::GetIntersection(Line l, float lowerBound, float upperBound, float se
 }
 
 Vector Vector::Rotate(float angle) const{
-    auto alpha=acos(this->x/this->GetNorm());
-    if (this->y<0){
-        alpha=-alpha;
-    }
-    return Vector(cos(alpha+angle)*this->GetNorm(),sin(alpha+angle)*this->GetNorm());
+    
+    return Vector(this->x*cos(angle)- this->y * sin(angle), this->x * sin(angle)+ this->y * cos(angle));
 }
 
+float Vector::GetRotation() {
+    auto rot = atan2(this->y, this->x);
+    if (this->x == 0) {
+        return (y > 0) ? PI/2: (y == 0) ? 0: 1.5*PI;
+    }
+    else if (y == 0) { // special cases
+        return (x >= 0) ? 0: PI;
+    }
+    if (x < 0 && y < 0)
+        rot = PI + rot;
+    else if (x < 0)
+        rot = PI + rot;
+    else if (y < 0)
+        rot = 1.5 * PI + (PI / 2 + rot);
+    return rot;
+}
 
 Point Point::Rotate(Point center, float angle){
     auto v = *this-center;

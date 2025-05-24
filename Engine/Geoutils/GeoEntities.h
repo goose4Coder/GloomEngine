@@ -11,13 +11,14 @@ namespace Geoutils{
             this->x=x;
             this->y=y;
         };
-        Vector operator*(const float& multiplier);
-        Vector operator+(const Vector& adder);
-        Vector operator-(const Vector& substractor);
+         Vector operator*(const float& multiplier) const;
+        Vector operator+(const Vector& adder) const;
+        Vector operator-(const Vector& substractor) const;
         Vector GetPerpendicular() const;
         float GetNorm() const;
         Vector Rotate(float angle) const;
         Vector Rotate(Vector center,float angle);
+        float GetRotation();
         inline bool Exists() {
             return !this->isNull;
         }
@@ -48,5 +49,5 @@ namespace Geoutils{
         Point origin = Point(0, 0);
     };
 
-}
+};
 #endif

@@ -8,38 +8,19 @@
 
 namespace Graphics{
 
-    class Drawer: public BaseNodes::SceneObject{
+    class BaseWallDrawer: public BaseNodes::Entity{
         public:
-        Drawer(float x, float y): BaseNodes::SceneObject(x,y){};
-    };
-
-    
-
-    class CircleDrawer: public Drawer{
-        public:
-        CircleDrawer(float x,float y): Drawer(x,y){};
-        void Update() override{};
-        const void Draw(float size, float screenX) override;
-        void Start() override{};
+        BaseWallDrawer(): Entity(0,0){};
+        BaseWallDrawer(float x,float y): Entity(x,y){};
+        BaseWallDrawer(ALLEGRO_COLOR colorToSet, float height) : Entity(0, 0) { this->color = colorToSet; this->height = height; }
+        const void Draw(float x, float screenX, float screenY, float perpDistance,bool shaded) override;
         protected:
-        std::string name="circle";
+        std::string name="wall";
+        float height=1;
+        float width=1;
+        ALLEGRO_COLOR color = al_map_rgb(0, 255, 0);
     };
 
-    class RectangleDrawer : public Drawer {
-    public:
-        RectangleDrawer(float x, float y, float width, float height) : Drawer(x, y) {
-            this->width=width;
-            this->height = height;
-        };
-        RectangleDrawer(float x, float y) : Drawer(x, y) {};
-        void Update() override {};
-        const void Draw(float size, float screenX) override;
-        void Start() override {};
-    protected:
-        std::string name = "rectangle";
-        float height=3;
-        float width=1;
-    };
     
 }
 #endif
