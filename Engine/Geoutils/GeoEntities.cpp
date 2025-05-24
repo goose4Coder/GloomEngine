@@ -84,19 +84,10 @@ Vector Vector::Rotate(float angle) const{
 }
 
 float Vector::GetRotation() {
-    auto rot = atan2(this->y, this->x);
-    if (this->x == 0) {
-        return (y > 0) ? PI/2: (y == 0) ? 0: 1.5*PI;
+    auto rot = acos(this->x/this->GetNorm());
+    if (this->y < 0) {
+        rot*=-1;
     }
-    else if (y == 0) { // special cases
-        return (x >= 0) ? 0: PI;
-    }
-    if (x < 0 && y < 0)
-        rot = PI + rot;
-    else if (x < 0)
-        rot = PI + rot;
-    else if (y < 0)
-        rot = 1.5 * PI + (PI / 2 + rot);
     return rot;
 }
 
