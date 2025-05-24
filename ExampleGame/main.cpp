@@ -36,12 +36,12 @@ protected:
 		}
 
 		if (al_key_down(&keyState, ALLEGRO_KEY_Z)) {
-			this->Rotate(-0.1);
+			this->Rotate(-0.01);
 			camera.Rotate(-0.01);
 			
 		}
 		if (al_key_down(&keyState, ALLEGRO_KEY_C)) {
-			this->Rotate(0.1);
+			this->Rotate(0.01);
 			camera.Rotate(0.01);
 			
 		}
